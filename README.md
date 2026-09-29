@@ -188,7 +188,5 @@ apply.cmd /revert "D:\path\to\instance\versions\你的版本"
 - `client_scripts/tooltip_food.js` 里针对 `effect.minecraft.health_boost` 的 tooltip 分支从此不再触发（无副作用，只是死代码）
 
 ## 说明
-
-- 这是**整合包作者脚本**的问题，不是车万女仆的 bug。TLM 的 `heal()` 实现是正确的
 - 同样的坑对**玩家自己**也成立：吃这类食物时被更高 grade 的效果占位、随后被夹血。本补丁一并解决
 - 如果你的包也改了 `Item_food_effect.js`，`apply.cmd` 会因为哈希不匹配而拒绝执行，此时请用方式 B 手动合并那一行

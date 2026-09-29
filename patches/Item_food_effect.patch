@@ -1,0 +1,19 @@
+--- a/kubejs/startup_scripts/registry/Item_food_effect.js
++++ b/kubejs/startup_scripts/registry/Item_food_effect.js
+@@ -203,7 +203,15 @@
+                 if (e.effect1) { food.effect(e.effect1, e.grade * duration, 0, 1) }
+                 if (e.effect2) { food.effect(e.effect2, e.grade * duration, 0, 1) }
+                 if (e.lv1Effect) { food.effect(e.lv1Effect, e.grade * duration, 0, 1) }
+-                if (e.lvhEffect) { food.effect(e.lvhEffect, e.grade * duration, e.grade - 1, 1) }
++                // SNK 补丁：原本这里施加 lvhEffect(minecraft:health_boost)。
++                // health_boost 是用「效果」临时抬高 max_health，而食物效果走 CLEAR_AND_SET：
++                // 每吃一口都会先清掉旧效果再重设，上限瞬间回落的那一刻原版 synchronizeHealth()
++                // 会把当前血量夹回真实上限 —— 表现为"血量高于 20 时吃面包反而掉到 20"，
++                // 同时让女仆的回血进食任务(MaidHealSelfTask: health < maxHealth)永远完不成 → 无限啃面包。
++                // 换成 absorption：同样是"吃了变肉"，但不抬高 maxHealth，
++                // 因此既不存在夹血，也不会让女仆把抬高的上限误判成残血。
++                // amp 用 (grade-1)/2 压制，避免高等级菜给出过厚吸收盾。回退：还原 .js.bak
++                if (e.lvhEffect) { food.effect("minecraft:absorption", e.grade * duration, Math.floor((e.grade - 1) / 2), 1) }
+                 if (e.extraLife) { food.effect("minecraft:absorption", e.grade * duration, Math.floor((e.grade * 3) - 1), 1) }
+                 if (e.health) { food.effect("minecraft:instant_health", 1, Math.floor((e.grade * 3) - 1), 1) }
+                 if (e.detoxify) {
